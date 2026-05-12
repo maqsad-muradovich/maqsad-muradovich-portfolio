@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maksad Muradovich — Full-Stack Developer</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0a0a0a;
+    --surface: #111111;
+    --border: #1e1e1e;
+    --accent: #e8ff47;
+    --accent2: #ff4747;
+    --text: #f0ece4;
+    --muted: #555;
+    --mono: 'Space Mono', monospace;
+    --display: 'Bebas Neue', cursive;
+    --body: 'DM Sans', sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--body);
+    overflow-x: hidden;
+    cursor: crosshair;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    position: fixed;
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.1s ease;
+    mix-blend-mode: difference;
+  }
+  .cursor-ring {
+    position: fixed;
+    width: 32px; height: 32px;
+    border: 1px solid var(--accent);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transition: transform 0.15s ease, width 0.2s, height 0.2s;
+    mix-blend-mode: difference;
+    transform: translate(-12px, -12px);
+  }
+
+  /* Noise overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.3;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 48px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(10,10,10,0.85);
+    backdrop-filter: blur(12px);
+  }
+
+  .nav-logo {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 40px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+
+  .nav-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: #4ade80;
+  }
+  .status-dot {
+    width: 6px; height: 6px;
+    background: #4ade80;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.3); }
+  }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-end;
+    padding: 140px 48px 80px;
+    position: relative;
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .hero-bg-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: var(--display);
+    font-size: clamp(120px, 20vw, 280px);
+    color: transparent;
+    -webkit-text-stroke: 1px #1a1a1a;
+    white-space: nowrap;
+    user-select: none;
+    letter-spacing: -0.02em;
+    animation: slowdrift 20s ease-in-out infinite alternate;
+  }
+  @keyframes slowdrift {
+    from { transform: translate(-50%, -50%) translateX(-20px); }
+    to { transform: translate(-50%, -50%) translateX(20px); }
+  }
+
+  .hero-grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    width: 100%;
+    align-items: end;
+  }
+
+  .hero-left {}
+
+  .hero-tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .hero-tag::before {
+    content: '';
+    width: 32px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .hero-name {
+    font-family: var(--display);
+    font-size: clamp(72px, 9vw, 140px);
+    line-height: 0.9;
+    letter-spacing: -0.01em;
+    margin-bottom: 32px;
+  }
+
+  .hero-name .highlight {
+    color: var(--accent);
+    display: block;
+  }
+
+  .hero-desc {
+    font-size: 16px;
+    line-height: 1.7;
+    color: #888;
+    max-width: 420px;
+    font-weight: 300;
+  }
+
+  .hero-right {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    align-items: flex-end;
+  }
+
+  .hero-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    width: 100%;
+    max-width: 380px;
+  }
+
+  .stat {
+    background: var(--surface);
+    padding: 28px 24px;
+  }
+
+  .stat-num {
+    font-family: var(--display);
+    font-size: 52px;
+    line-height: 1;
+    color: var(--accent);
+  }
+
+  .stat-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  .hero-cta {
+    display: flex;
+    gap: 16px;
+  }
+
+  .btn-primary {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 16px 32px;
+    background: var(--accent);
+    color: #000;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    font-weight: 700;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .btn-primary:hover { background: #fff; transform: translateY(-2px); }
+
+  .btn-ghost {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 16px 32px;
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: border-color 0.2s, transform 0.1s;
+  }
+  .btn-ghost:hover { border-color: var(--text); transform: translateY(-2px); }
+
+  /* MARQUEE */
+  .marquee-wrap {
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+    padding: 16px 0;
+    background: var(--surface);
+  }
+  .marquee {
+    display: flex;
+    gap: 0;
+    animation: marquee 25s linear infinite;
+    white-space: nowrap;
+  }
+  .marquee-item {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 0 32px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .marquee-sep {
+    width: 4px; height: 4px;
+    background: var(--accent);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* SECTION */
+  section {
+    padding: 120px 48px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 24px;
+    margin-bottom: 80px;
+  }
+
+  .section-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+  }
+
+  .section-title {
+    font-family: var(--display);
+    font-size: clamp(48px, 6vw, 80px);
+    line-height: 1;
+    letter-spacing: -0.01em;
+  }
+
+  /* SERVICES */
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+  }
+
+  .service-card {
+    background: var(--surface);
+    padding: 48px 40px;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s;
+  }
+  .service-card:hover { background: #161616; }
+
+  .service-card::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+  }
+  .service-card:hover::before { transform: scaleX(1); }
+
+  .service-icon {
+    font-size: 32px;
+    margin-bottom: 24px;
+  }
+
+  .service-title {
+    font-family: var(--display);
+    font-size: 28px;
+    letter-spacing: 0.02em;
+    margin-bottom: 16px;
+  }
+
+  .service-desc {
+    font-size: 14px;
+    line-height: 1.7;
+    color: #666;
+    font-weight: 300;
+  }
+
+  .service-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 24px;
+  }
+
+  .tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* PROJECTS */
+  .projects-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    background: var(--border);
+  }
+
+  .project-item {
+    background: var(--surface);
+    display: grid;
+    grid-template-columns: 80px 1fr auto auto;
+    align-items: center;
+    gap: 40px;
+    padding: 40px 48px;
+    transition: background 0.2s;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+  }
+  .project-item:hover { background: #141414; }
+  .project-item:hover .project-arrow { transform: translateX(8px); color: var(--accent); }
+
+  .project-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  .project-info {}
+
+  .project-title {
+    font-family: var(--display);
+    font-size: 32px;
+    letter-spacing: 0.01em;
+    margin-bottom: 6px;
+  }
+
+  .project-subtitle {
+    font-size: 13px;
+    color: #555;
+    font-family: var(--mono);
+  }
+
+  .project-result {
+    text-align: right;
+  }
+
+  .project-metric {
+    font-family: var(--display);
+    font-size: 36px;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .project-metric-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .project-arrow {
+    font-size: 20px;
+    color: var(--muted);
+    transition: transform 0.2s, color 0.2s;
+  }
+
+  /* ABOUT */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+
+  .about-text {
+    font-size: 18px;
+    line-height: 1.8;
+    color: #888;
+    font-weight: 300;
+  }
+  .about-text strong { color: var(--text); font-weight: 500; }
+  .about-text p + p { margin-top: 24px; }
+
+  .skills-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    background: var(--border);
+  }
+
+  .skill-row {
+    background: var(--surface);
+    padding: 20px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .skill-name {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text);
+    letter-spacing: 0.05em;
+  }
+
+  .skill-bar-wrap {
+    flex: 1;
+    margin: 0 24px;
+    height: 2px;
+    background: var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .skill-bar {
+    height: 100%;
+    background: var(--accent);
+    width: 0;
+    animation: fillbar 1.5s ease forwards;
+    animation-delay: var(--delay, 0s);
+  }
+  @keyframes fillbar {
+    to { width: var(--level); }
+  }
+
+  .skill-pct {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  /* CONTACT */
+  .contact-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+  }
+
+  .contact-headline {
+    font-family: var(--display);
+    font-size: clamp(52px, 7vw, 100px);
+    line-height: 0.95;
+    letter-spacing: -0.01em;
+  }
+
+  .contact-headline .line2 {
+    color: var(--accent);
+  }
+
+  .contact-sub {
+    margin-top: 32px;
+    font-size: 15px;
+    color: #555;
+    line-height: 1.7;
+    font-weight: 300;
+    max-width: 380px;
+  }
+
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .form-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  .form-input, .form-textarea {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 16px 20px;
+    font-family: var(--body);
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.2s;
+    resize: none;
+  }
+  .form-input:focus, .form-textarea:focus {
+    border-color: var(--accent);
+  }
+  .form-input::placeholder, .form-textarea::placeholder {
+    color: #333;
+  }
+
+  .form-submit {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 20px 40px;
+    background: var(--accent);
+    color: #000;
+    border: none;
+    cursor: pointer;
+    font-weight: 700;
+    align-self: flex-start;
+    transition: background 0.2s, transform 0.15s;
+    margin-top: 8px;
+  }
+  .form-submit:hover { background: #fff; transform: translateY(-2px); }
+
+  /* FOOTER */
+  footer {
+    padding: 40px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-copy {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 32px;
+  }
+  .footer-links a {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--accent); }
+
+  /* Scroll reveal */
+  .reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    nav { padding: 20px 24px; }
+    .nav-links, .nav-status { display: none; }
+    .hero { padding: 120px 24px 60px; }
+    .hero-grid { grid-template-columns: 1fr; gap: 48px; }
+    .hero-right { align-items: flex-start; }
+    section { padding: 80px 24px; }
+    .services-grid { grid-template-columns: 1fr; }
+    .about-grid, .contact-inner { grid-template-columns: 1fr; gap: 48px; }
+    .project-item { grid-template-columns: 1fr; gap: 12px; padding: 28px 24px; }
+    .project-result, .project-arrow { display: none; }
+    footer { flex-direction: column; gap: 20px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">MM.DEV</div>
+  <ul class="nav-links">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#work">Work</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="nav-status">
+    <div class="status-dot"></div>
+    Available for projects
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg-text">FULL-STACK DEV</div>
+  <div class="hero-grid">
+    <div class="hero-left reveal">
+      <div class="hero-tag">Freelance Full-Stack Developer</div>
+      <h1 class="hero-name">
+        MAKSAD
+        <span class="highlight">MURADOVICH</span>
+      </h1>
+      <p class="hero-desc">I build robust, scalable systems that actually ship. Backend architecture, API design, SaaS products — from zero to production.</p>
+    </div>
+    <div class="hero-right reveal">
+      <div class="hero-stats">
+        <div class="stat">
+          <div class="stat-num">5+</div>
+          <div class="stat-label">Years exp.</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">10+</div>
+          <div class="stat-label">Projects shipped</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">$35</div>
+          <div class="stat-label">Per hour</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">100%</div>
+          <div class="stat-label">On time</div>
+        </div>
+      </div>
+      <div class="hero-cta">
+        <a href="#contact" class="btn-primary">Hire me</a>
+        <a href="#work" class="btn-ghost">See work</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee">
+    <div class="marquee-item">Node.js <span class="marquee-sep"></span></div>
+    <div class="marquee-item">TypeScript <span class="marquee-sep"></span></div>
+    <div class="marquee-item">React <span class="marquee-sep"></span></div>
+    <div class="marquee-item">PostgreSQL <span class="marquee-sep"></span></div>
+    <div class="marquee-item">AWS <span class="marquee-sep"></span></div>
+    <div class="marquee-item">Docker <span class="marquee-sep"></span></div>
+    <div class="marquee-item">REST API <span class="marquee-sep"></span></div>
+    <div class="marquee-item">GraphQL <span class="marquee-sep"></span></div>
+    <div class="marquee-item">Redis <span class="marquee-sep"></span></div>
+    <div class="marquee-item">Microservices <span class="marquee-sep"></span></div>
+    <div class="marquee-item">Node.js <span class="marquee-sep"></span></div>
+    <div class="marquee-item">TypeScript <span class="marquee-sep"></span></div>
+    <div class="marquee-item">React <span class="marquee-sep"></span></div>
+    <div class="marquee-item">PostgreSQL <span class="marquee-sep"></span></div>
+    <div class="marquee-item">AWS <span class="marquee-sep"></span></div>
+    <div class="marquee-item">Docker <span class="marquee-sep"></span></div>
+    <div class="marquee-item">REST API <span class="marquee-sep"></span></div>
+    <div class="marquee-item">GraphQL <span class="marquee-sep"></span></div>
+    <div class="marquee-item">Redis <span class="marquee-sep"></span></div>
+    <div class="marquee-item">Microservices <span class="marquee-sep"></span></div>
+  </div>
+</div>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="section-header reveal">
+    <span class="section-num">01 —</span>
+    <h2 class="section-title">SERVICES</h2>
+  </div>
+  <div class="services-grid">
+    <div class="service-card reveal">
+      <div class="service-icon">⚙️</div>
+      <div class="service-title">BACKEND SYSTEMS</div>
+      <p class="service-desc">Scalable APIs and server architecture that handle real load. From auth systems to complex business logic — built to last.</p>
+      <div class="service-tags">
+        <span class="tag">Node.js</span>
+        <span class="tag">Python</span>
+        <span class="tag">PostgreSQL</span>
+        <span class="tag">Redis</span>
+      </div>
+    </div>
+    <div class="service-card reveal">
+      <div class="service-icon">🚀</div>
+      <div class="service-title">SAAS PRODUCTS</div>
+      <p class="service-desc">Full-cycle SaaS development. MVP in 4–6 weeks. Payments, subscriptions, dashboards — everything you need to launch.</p>
+      <div class="service-tags">
+        <span class="tag">React</span>
+        <span class="tag">Next.js</span>
+        <span class="tag">Stripe</span>
+        <span class="tag">Supabase</span>
+      </div>
+    </div>
+    <div class="service-card reveal">
+      <div class="service-icon">🔗</div>
+      <div class="service-title">API INTEGRATIONS</div>
+      <p class="service-desc">Third-party APIs, webhooks, data pipelines. I connect systems that weren't meant to talk to each other.</p>
+      <div class="service-tags">
+        <span class="tag">REST</span>
+        <span class="tag">GraphQL</span>
+        <span class="tag">Webhooks</span>
+        <span class="tag">AWS</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WORK -->
+<section id="work">
+  <div class="section-header reveal">
+    <span class="section-num">02 —</span>
+    <h2 class="section-title">SELECTED WORK</h2>
+  </div>
+  <div class="projects-list">
+    <div class="project-item reveal">
+      <div class="project-num">001</div>
+      <div class="project-info">
+        <div class="project-title">FINTECH DASHBOARD</div>
+        <div class="project-subtitle">Real-time analytics · Node.js · React · WebSockets</div>
+      </div>
+      <div class="project-result">
+        <div class="project-metric">3x</div>
+        <div class="project-metric-label">Faster queries</div>
+      </div>
+      <div class="project-arrow">→</div>
+    </div>
+    <div class="project-item reveal">
+      <div class="project-num">002</div>
+      <div class="project-info">
+        <div class="project-title">E-COMMERCE PLATFORM</div>
+        <div class="project-subtitle">Multi-vendor marketplace · Stripe · PostgreSQL</div>
+      </div>
+      <div class="project-result">
+        <div class="project-metric">$2M</div>
+        <div class="project-metric-label">GMV in year 1</div>
+      </div>
+      <div class="project-arrow">→</div>
+    </div>
+    <div class="project-item reveal">
+      <div class="project-num">003</div>
+      <div class="project-info">
+        <div class="project-title">AI CONTENT TOOL</div>
+        <div class="project-subtitle">LLM integration · OpenAI API · SaaS · Next.js</div>
+      </div>
+      <div class="project-result">
+        <div class="project-metric">12k</div>
+        <div class="project-metric-label">Active users</div>
+      </div>
+      <div class="project-arrow">→</div>
+    </div>
+    <div class="project-item reveal">
+      <div class="project-num">004</div>
+      <div class="project-info">
+        <div class="project-title">LOGISTICS API</div>
+        <div class="project-subtitle">Microservices · Docker · AWS · Real-time tracking</div>
+      </div>
+      <div class="project-result">
+        <div class="project-metric">99.9%</div>
+        <div class="project-metric-label">Uptime</div>
+      </div>
+      <div class="project-arrow">→</div>
+    </div>
+    <a class="project-item reveal" href="https://focusenglish.netlify.app" target="_blank" rel="noopener noreferrer">
+      <div class="project-num">005</div>
+      <div class="project-info">
+        <div class="project-title">FOCUS ENGLISH LMS</div>
+        <div class="project-subtitle">Language center platform · React · TypeScript · Supabase</div>
+      </div>
+      <div class="project-result">
+        <div class="project-metric">100%</div>
+        <div class="project-metric-label">Type-safe codebase</div>
+      </div>
+      <div class="project-arrow">→</div>
+    </a>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-header reveal">
+    <span class="section-num">03 —</span>
+    <h2 class="section-title">ABOUT</h2>
+  </div>
+  <div class="about-grid">
+    <div class="about-text reveal">
+      <p>I'm a full-stack developer with <strong>5+ years</strong> building production systems. Started as a backend engineer, grew into full-stack, now I run lean freelance projects where I own the full technical stack.</p>
+      <p>I don't write code to impress — I write code that <strong>solves real problems</strong>. Clean architecture, proper error handling, actual tests. The boring stuff that actually matters.</p>
+      <p>Currently exploring <strong>vibe-coding</strong> as a tool to accelerate delivery without sacrificing quality. AI speeds up the scaffold; experience ensures the structure holds.</p>
+    </div>
+    <div class="skills-list reveal">
+      <div class="skill-row">
+        <span class="skill-name">Node.js / TypeScript</span>
+        <div class="skill-bar-wrap"><div class="skill-bar" style="--level:95%; --delay:0.1s"></div></div>
+        <span class="skill-pct">95%</span>
+      </div>
+      <div class="skill-row">
+        <span class="skill-name">React / Next.js</span>
+        <div class="skill-bar-wrap"><div class="skill-bar" style="--level:88%; --delay:0.2s"></div></div>
+        <span class="skill-pct">88%</span>
+      </div>
+      <div class="skill-row">
+        <span class="skill-name">PostgreSQL / Redis</span>
+        <div class="skill-bar-wrap"><div class="skill-bar" style="--level:90%; --delay:0.3s"></div></div>
+        <span class="skill-pct">90%</span>
+      </div>
+      <div class="skill-row">
+        <span class="skill-name">AWS / Docker</span>
+        <div class="skill-bar-wrap"><div class="skill-bar" style="--level:82%; --delay:0.4s"></div></div>
+        <span class="skill-pct">82%</span>
+      </div>
+      <div class="skill-row">
+        <span class="skill-name">System Architecture</span>
+        <div class="skill-bar-wrap"><div class="skill-bar" style="--level:91%; --delay:0.5s"></div></div>
+        <span class="skill-pct">91%</span>
+      </div>
+      <div class="skill-row">
+        <span class="skill-name">Python / FastAPI</span>
+        <div class="skill-bar-wrap"><div class="skill-bar" style="--level:78%; --delay:0.6s"></div></div>
+        <span class="skill-pct">78%</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-inner">
+    <div class="reveal">
+      <h2 class="contact-headline">
+        LET'S
+        <span class="line2">BUILD</span>
+        SOMETHING.
+      </h2>
+      <p class="contact-sub">Have a project in mind? Currently accepting new clients. Let's talk about what you're building.</p>
+    </div>
+    <form class="contact-form reveal" onsubmit="handleSubmit(event)">
+      <div class="form-field">
+        <label class="form-label">Your name</label>
+        <input class="form-input" type="text" placeholder="Ivan Petrov" />
+      </div>
+      <div class="form-field">
+        <label class="form-label">Email</label>
+        <input class="form-input" type="email" placeholder="ivan@company.com" />
+      </div>
+      <div class="form-field">
+        <label class="form-label">Project details</label>
+        <textarea class="form-textarea" rows="5" placeholder="Tell me about your project, budget, timeline..."></textarea>
+      </div>
+      <button type="submit" class="form-submit">Send message →</button>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-copy">© 2026 Maksad Muradovich. All rights reserved.</div>
+  <div class="footer-links">
+    <a href="#">GitHub</a>
+    <a href="#">LinkedIn</a>
+    <a href="#">Upwork</a>
+    <a href="#">Telegram</a>
+  </div>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.transform = `translate(${mx - 4}px, ${my - 4}px)`;
+  });
+
+  function animateRing() {
+    rx += (mx - rx - 16) * 0.12;
+    ry += (my - ry - 16) * 0.12;
+    ring.style.transform = `translate(${rx}px, ${ry}px)`;
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  document.querySelectorAll('a, button').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.transform += ' scale(2)';
+      ring.style.width = '48px';
+      ring.style.height = '48px';
+    });
+    el.addEventListener('mouseleave', () => {
+      ring.style.width = '32px';
+      ring.style.height = '32px';
+    });
+  });
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+
+  // Form submit
+  function handleSubmit(e) {
+    e.preventDefault();
+    const btn = e.target.querySelector('.form-submit');
+    btn.textContent = 'Message sent ✓';
+    btn.style.background = '#4ade80';
+    setTimeout(() => {
+      btn.textContent = 'Send message →';
+      btn.style.background = '';
+    }, 3000);
+  }
+</script>
+</body>
+</html>
